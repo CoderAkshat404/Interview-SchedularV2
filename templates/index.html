@@ -2,120 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Scheduler</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Custom styles for background and font */
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Poppins', sans-serif;
-            /* Using Flask's url_for for background image as per original code */
-            background-image: url("{{ url_for('static', filename='bg.png') }}");
+        }
+
+        body {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Updated background image */
+            background: url("{{ url_for('static', filename='bg.png') }}") no-repeat center center fixed;
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            overflow: hidden;
         }
 
-        /* Custom styling for file input button */
-        input[type="file"]::file-selector-button {
-            @apply bg-blue-700 text-white py-2 px-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-800;
-        }
-
-        /* Webkit specific styles for file input button */
-        input[type="file"]::-webkit-file-upload-button {
-            @apply bg-blue-700 text-white py-2 px-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-800;
-        }
-
-        /* Style for radio buttons */
-        input[type="radio"] {
-            /* Custom radio button appearance */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            @apply w-5 h-5 border-2 border-white rounded-full bg-transparent cursor-pointer relative;
-            outline: none;
-            transition: all 0.2s ease-in-out;
-        }
-
-        input[type="radio"]:checked {
-            @apply bg-amber-500 border-amber-500;
-        }
-
-        input[type="radio"]:checked::after {
+        body::before {
             content: '';
-            @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: -1;
+            transition: opacity 0.4s ease;
         }
 
-        /* Placeholder color for inputs */
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+        .container {
+            height: auto;
+            width: 90%;
+            max-width: 850px;
+            background: rgba(95, 58, 26, 0.1);
+            backdrop-filter: blur(0.67px);
+            -webkit-backdrop-filter: blur(6.7px);
+            border-radius: 20px;
+            padding: 40px;
+            transition: transform 0.3s ease;
+            text-align: center;
+            border: 0.5px solid #999;
+        }
+
+        .container:hover {
+            /* Minimal hover effect */
+            transform: scale(1.005); 
+        }
+
+        h2 {
+            font-size: 35px;
+            /* Text color changed to black */
+            color: #000; 
+            margin-bottom: 30px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        h2:hover {
+            /* Minimal hover effect - removed scale */
+            transform: none; 
+        }
+
+        label {
+            font-size: 20px;
+            display: block;
+            text-align: left;
+            /* Text color changed to black */
+            color: #000; 
+            margin-bottom: 8px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        label:hover {
+            /* Minimal hover effect - removed scale */
+            transform: none; 
+        }
+
+        input[type="file"],
+        input[type="time"],
+        input[type="number"] {
+            font-size: large;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"]:hover,
+        input[type="time"]:hover,
+        input[type="number"]:hover {
+            /* Minimal hover effect - removed scale */
+            transform: none; 
+        }
+
+        .radio-group {
+            text-align: left;
+            margin-bottom: 20px;
+            /* Text color changed to black */
+            color: #000; 
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .radio-group label:hover {
+            /* Minimal hover effect - removed scale */
+            transform: none; 
+        }
+
+        .btn {
+            background-color: #08385d;
+            color: #fefde6;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #08385d;
+            /* Minimal hover effect - reduced scale */
+            transform: scale(1.05); 
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative overflow-hidden">
-    <!-- Background Overlay for better readability and depth -->
-    <div class="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+<body>
+    <div class="container">
+        <h2>Get Your Interviews Scheduled!</h2>
+        <form method="post" enctype="multipart/form-data">
+            <label for="excel_file">Upload Google Form Responses (Excel File)</label>
+            <input type="file" name="excel_file" id="excel_file" required />
 
-    <div class="relative z-10 w-11/12 max-w-3xl bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20
-                transition-all duration-500 ease-in-out hover:scale-[1.01] hover:shadow-3xl transform-gpu">
-        <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-8 text-center tracking-wide
-                   transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-200">
-            Get Your Interviews Scheduled!
-        </h2>
-        <form method="post" enctype="multipart/form-data" class="space-y-6">
-            <div>
-                <label for="excel_file" class="block text-lg md:text-xl font-semibold text-white text-left mb-2
-                                               transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-100">
-                    Upload Google Form Responses (Excel File)
-                </label>
-                <input type="file" name="excel_file" id="excel_file" required
-                       class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white
-                              focus:outline-none focus:ring-2 focus:ring-amber-400
-                              transition-all duration-300 ease-in-out hover:bg-white/30 hover:scale-[1.01] text-base md:text-lg"/>
+            <label for="start_time">Interview Start Time</label>
+            <input type="time" name="start_time" id="start_time" required/>
+
+            <label for="duration">Duration per interview (minutes)</label>
+            <input type="number" name="duration" id="duration" min="1" required>
+            <br>
+            <div class="radio-group">
+                <label><input type="radio" name="schedule_type" value="separate_days" checked> On Separate Days</label>
+                <label><input type="radio" name="schedule_type" value="same_day"> On Same Day</label>
             </div>
 
-            <div>
-                <label for="start_time" class="block text-lg md:text-xl font-semibold text-white text-left mb-2
-                                                transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-100">
-                    Interview Start Time
-                </label>
-                <input type="time" name="start_time" id="start_time" required
-                       class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white
-                              focus:outline-none focus:ring-2 focus:ring-amber-400
-                              transition-all duration-300 ease-in-out hover:bg-white/30 hover:scale-[1.01] text-base md:text-lg"/>
-            </div>
-
-            <div>
-                <label for="duration" class="block text-lg md:text-xl font-semibold text-white text-left mb-2
-                                             transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-100">
-                    Duration per interview (minutes)
-                </label>
-                <input type="number" name="duration" id="duration" min="1" required
-                       class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white
-                              focus:outline-none focus:ring-2 focus:ring-amber-400
-                              transition-all duration-300 ease-in-out hover:bg-white/30 hover:scale-[1.01] text-base md:text-lg"/>
-            </div>
-            
-            <div class="radio-group text-left text-white text-lg md:text-xl space-y-3 md:space-x-6 md:space-y-0 flex flex-col md:flex-row items-start md:items-center">
-                <label class="inline-flex items-center transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-100">
-                    <input type="radio" name="schedule_type" value="separate_days" checked class="mr-2">
-                    On Separate Days
-                </label>
-                <label class="inline-flex items-center transition-all duration-300 ease-in-out hover:scale-105 hover:text-amber-100">
-                    <input type="radio" name="schedule_type" value="same_day" class="mr-2">
-                    On Same Day
-                </label>
-            </div>
-
-            <button type="submit" class="w-full bg-gradient-to-r from-blue-700 to-blue-900 text-white
-                                         py-3 px-8 rounded-full text-xl md:text-2xl font-bold cursor-pointer shadow-lg
-                                         hover:from-blue-800 hover:to-blue-950 hover:shadow-xl
-                                         transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 transform-gpu">
-                Generate PDFs + VCFs
-            </button>
+            <button type="submit" class="btn">Generate PDFs + VCFs</button>
         </form>
     </div>
 </body>
