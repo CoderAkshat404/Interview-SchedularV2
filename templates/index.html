@@ -1,175 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Interview Scheduler</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+  <meta charset="UTF-8">
+  <title>Interview Scheduler</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Updated background image */
-            background: url("{{ url_for('static', filename='bg.png') }}") no-repeat center center fixed;
-            background-size: cover;
-            overflow: hidden;
-        }
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a0a0a, #1b1b1b);
+      color: white;
+      padding: 20px;
+    }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            z-index: -1;
-            transition: opacity 0.4s ease;
-        }
+    .wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1200px;
+    }
 
-        .container {
-            height: auto;
-            width: 90%;
-            max-width: 850px;
-            background: rgba(95, 58, 26, 0.1);
-            backdrop-filter: blur(0.67px);
-            -webkit-backdrop-filter: blur(6.7px);
-            border-radius: 20px;
-            padding: 40px;
-            transition: transform 0.3s ease;
-            text-align: center;
-            border: 0.5px solid #999;
-        }
+    /* Left section */
+    .left {
+      flex: 1;
+      padding-right: 40px;
+    }
 
-        .container:hover {
-            /* Minimal hover effect */
-            transform: scale(1.005); 
-        }
+    .left h1 {
+      font-size: 60px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
 
-        h2 {
-            font-size: 35px;
-            /* Text color changed to black */
-            color: #000; 
-            margin-bottom: 30px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
+    .left h2 {
+      font-size: 22px;
+      font-weight: 400;
+      margin-top: 15px;
+      color: #ccc;
+      text-align: left;
+    }
 
-        h2:hover {
-            /* Minimal hover effect - removed scale */
-            transform: none; 
-        }
+    /* Right form section */
+    .right {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
 
-        label {
-            font-size: 20px;
-            display: block;
-            text-align: left;
-            /* Text color changed to black */
-            color: #000; 
-            margin-bottom: 8px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
+    /* Background card layering */
+    .card-bg {
+      position: absolute;
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      border-radius: 20px;
+      background: #2e2e2e;
+      top: 20px;
+      left: 20px;
+      z-index: 0;
+    }
 
-        label:hover {
-            /* Minimal hover effect - removed scale */
-            transform: none; 
-        }
+    .card-bg:nth-child(2) {
+      top: 40px;
+      left: 40px;
+      background: #3c3c3c;
+    }
 
-        input[type="file"],
-        input[type="time"],
-        input[type="number"] {
-            font-size: large;
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            margin-bottom: 20px;
-        }
+    /* Main form card */
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      z-index: 1;
+      color: #000;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
 
-        input[type="file"]:hover,
-        input[type="time"]:hover,
-        input[type="number"]:hover {
-            /* Minimal hover effect - removed scale */
-            transform: none; 
-        }
+    h2 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      text-align: center;
+    }
 
-        .radio-group {
-            text-align: left;
-            margin-bottom: 20px;
-            /* Text color changed to black */
-            color: #000; 
-        }
+    label {
+      font-size: 16px;
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
 
-        .radio-group label {
-            margin-right: 20px;
-            transition: transform 0.3s ease;
-        }
+    input[type="file"],
+    input[type="time"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
 
-        .radio-group label:hover {
-            /* Minimal hover effect - removed scale */
-            transform: none; 
-        }
+    .radio-group {
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
 
-        .btn {
-            background-color: #08385d;
-            color: #fefde6;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
+    .radio-group label {
+      margin-right: 20px;
+    }
 
-        .btn:hover {
-            background-color: #08385d;
-            /* Minimal hover effect - reduced scale */
-            transform: scale(1.05); 
-        }
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, #5a2ccf, #7b3efc);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
+    .btn:hover {
+      transform: scale(1.05);
+    }
 
-            h2 {
-                font-size: 22px;
-            }
-        }
-    </style>
+    @media (max-width: 900px) {
+      .wrapper {
+        flex-direction: column;
+        text-align: center;
+      }
+      .left {
+        padding: 0 0 30px 0;
+      }
+      .left h1 {
+        font-size: 40px;
+      }
+      .left h2 {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
+  <div class="wrapper">
+    <!-- Left big title -->
+    <div class="left">
+      <h1>Interview<br>Scheduler</h1>
+      <h2>by <span class="auto-type"></span></h2>
+    </div>
+
+    <!-- Right form with layering -->
+    <div class="right">
+      <div class="card-bg"></div>
+      <div class="card-bg"></div>
+      <div class="container">
         <h2>Get Your Interviews Scheduled!</h2>
         <form method="post" enctype="multipart/form-data">
-            <label for="excel_file">Upload Google Form Responses (Excel File)</label>
-            <input type="file" name="excel_file" id="excel_file" required />
+          <label for="excel_file">Upload Google Form Responses (Excel File)</label>
+          <input type="file" name="excel_file" id="excel_file" required />
 
-            <label for="start_time">Interview Start Time</label>
-            <input type="time" name="start_time" id="start_time" required/>
+          <label for="start_time">Interview Start Time</label>
+          <input type="time" name="start_time" id="start_time" required/>
 
-            <label for="duration">Duration per interview (minutes)</label>
-            <input type="number" name="duration" id="duration" min="1" required>
-            <br>
-            <div class="radio-group">
-                <label><input type="radio" name="schedule_type" value="separate_days" checked> On Separate Days</label>
-                <label><input type="radio" name="schedule_type" value="same_day"> On Same Day</label>
-            </div>
+          <label for="duration">Duration per interview (minutes)</label>
+          <input type="number" name="duration" id="duration" min="1" required>
 
-            <button type="submit" class="btn">Generate PDFs + VCFs</button>
+          <div class="radio-group">
+            <label><input type="radio" name="schedule_type" value="separate_days" checked> On Separate Days</label>
+            <label><input type="radio" name="schedule_type" value="same_day"> On Same Day</label>
+          </div>
+
+          <button type="submit" class="btn">Generate PDFs + VCFs</button>
         </form>
+      </div>
     </div>
+  </div>
+
+  <!-- Typed.js auto-type effect -->
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <script>
+    var typed = new Typed(".auto-type", {
+        strings: ["Akshat Mishra", "Akshata Bakre"],
+        typeSpeed: 120,
+        backSpeed: 120,
+        loop: true
+    });
+  </script>
 </body>
 </html>
