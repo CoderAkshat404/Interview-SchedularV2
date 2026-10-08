@@ -2,3 +2,4 @@ build-essential
 python3-dev
 libatlas-base-dev
 libgfortran5
+python3-setuptools
